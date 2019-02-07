@@ -252,11 +252,14 @@ while True:
 				soup = BeautifulSoup(html_content, "html.parser")
 
 				date_html = soup.find("span", {"class": "meta-date"})
-				date = date_html.get_text()
+				date = str(date_html.get_text())
 				date = date.replace("        ", "").replace("\n", "").replace("\r", "")
 				date_sql = date
 
-				date = int(str(date[0]))
+				if (date[0].isdigit() and date[1].isdigit()):
+					date = int(str(date[0] + date[1]))
+				elif (date[0].isdigit()):
+					date = int(date[0])
 
 				day = int(time.strftime("%d"))
 
@@ -356,11 +359,14 @@ while True:
 				soup = BeautifulSoup(html_content, "html.parser")
 
 				date_html = soup.find("span", {"class": "meta-date"})
-				date = date_html.get_text()
+				date = str(date_html.get_text())
 				date = date.replace("        ", "").replace("\n", "").replace("\r", "")
 				date_sql = date
 
-				date = int(str(date[0]))
+				if (date[0].isdigit() and date[1].isdigit()):
+					date = int(str(date[0] + date[1]))
+				elif (date[0].isdigit()):
+					date = int(date[0])
 
 				day = int(time.strftime("%d"))
 
@@ -395,11 +401,14 @@ while True:
 			soup = BeautifulSoup(html_content, "html.parser")
 
 			date_html = soup.find("span", {"class": "meta-date"})
-			date = date_html.get_text()
+			date = str(date_html.get_text())
 			date = date.replace("        ", "").replace("\n", "").replace("\r", "")
 			date_sql = date
 
-			date = int(str(date[0]))
+			if (date[0].isdigit() and date[1].isdigit()):
+				date = int(str(date[0] + date[1]))
+			elif (date[0].isdigit()):
+				date = int(date[0])
 
 			day = int(time.strftime("%d"))
 
@@ -429,11 +438,3 @@ while True:
 
 	else:
 		print("Invalid command. Try again.")
-
-
-
-
-
-
-
-
