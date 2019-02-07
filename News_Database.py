@@ -18,19 +18,23 @@ class News():
         width_height = ""
         pic_width_height = ""
         headline_font_size = ""
+        headline_width = ""
 
         if (self.size == "big"):
             width_height = "width: 350px; height: 450px;"
             pic_width_height = """width='350' height='300'"""
             headline_font_size = "font-size: 1.2rem;"
+            headline_width = "width: 325px;"
         elif (self.size == "medium"):
             width_height = "width: 500px; height: 390px;"
             pic_width_height = """width='500' height='270'"""
             headline_font_size = "font-size: 1.2rem;"
+            headline_width = "width: 485px;"
         elif (self.size == "small"):
             width_height = "width: 230px; height: 400px;"
             pic_width_height = """width='230' height='230'"""
             headline_font_size = "font-size: 1.1rem;"
+            headline_width = "width: 200px;"
 
         return """
         <!DOCTYPE html>
@@ -63,7 +67,7 @@ class News():
 						</span>
 					</div>
 
-					<div id="headline" style="font-family: 'Open Sans',sans-serif;""" + headline_font_size + """line-height: 1.5; color: #333; margin-top: 12px;">
+					<div id="headline" style="font-family: 'Open Sans',sans-serif; """ + headline_font_size + " " + headline_width + """ line-height: 1.5; color: #333; margin-top: 12px;">
 						<a href='""" + self.link + """' style="text-decoration:none;">
 							<span id="title" style="color: black;">
 								""" + self.title + """
@@ -118,6 +122,3 @@ class Database_Post():
         query = "insert into Tbl_Posts values (@p1,@p2,@p3,@p4,@p5)"
         self.cursor.execute(query,(News.title,News.section,News.date,News.read_num,News.link))
         self.connection.commit()
-
-
-
