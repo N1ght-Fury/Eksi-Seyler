@@ -2,7 +2,9 @@ import sqlite3
 
 class News():
 
-    def __init__(self,title,section,section_link,date,read_num,link,picture,size):
+    def __init__(self,Pos_ID_1,Pos_ID_2,title,section,section_link,date,read_num,link,picture,size):
+        self.Pos_ID_1 = Pos_ID_1
+        self.Pos_ID_2 = Pos_ID_2
         self.title = title
         self.section = section
         self.section_link = section_link
@@ -28,10 +30,10 @@ class News():
         elif (self.size == "medium"):
             width_height = "width: 500px; height: 390px;"
             pic_width_height = """width='500' height='270'"""
-            headline_font_size = "font-size: 1.2rem;"
+            headline_font_size = "font-size: 1.4rem;"
             headline_width = "width: 485px;"
         elif (self.size == "small"):
-            width_height = "width: 230px; height: 400px;"
+            width_height = "width: 230px; height: 430px;"
             pic_width_height = """width='230' height='230'"""
             headline_font_size = "font-size: 1.1rem;"
             headline_width = "width: 200px;"
@@ -97,6 +99,8 @@ class Database_Post():
 
         query = "create table if not exists " \
                 "Tbl_Posts (" \
+                "Pos_ID_1 text," \
+                "Pos_ID_2 text," \
                 "Title text," \
                 "Section text," \
                 "Date text," \
@@ -105,10 +109,23 @@ class Database_Post():
         self.cursor.execute(query)
         self.connection.commit()
 
-    def check_if_post_exists(self,link):
+    def check_if_post_exists(self,id_1 = "", id_2 = "", link = ""):
 
-        query = "select * from Tbl_Posts where link = @p1"
-        self.cursor.execute(query,(link,))
+        select_ID = ""
+        var_value = ""
+
+        if (len(id_1) != 0):
+            select_ID = "Pos_ID_1"
+            var_value = id_1
+        elif (len(id_2) != 0):
+            select_ID = "Pos_ID_2"
+            var_value = id_2
+        elif (len(link) != 0):
+            select_ID = "link"
+            var_value = link
+
+        query = "select * from Tbl_Posts where " + select_ID + " = @p1"
+        self.cursor.execute(query,(var_value,))
         posts = self.cursor.fetchall()
 
         if (len(posts) == 0):
@@ -119,6 +136,9 @@ class Database_Post():
 
     def add_post(self,News):
 
-        query = "insert into Tbl_Posts values (@p1,@p2,@p3,@p4,@p5)"
-        self.cursor.execute(query,(News.title,News.section,News.date,News.read_num,News.link))
+        query = "insert into Tbl_Posts values (@p1,@p2,@p3,@p4,@p5,@p6,@p7)"
+        self.cursor.execute(query,(News.Pos_ID_1,News.Pos_ID_2,News.title,News.section,News.date,News.read_num,News.link))
         self.connection.commit()
+
+
+
