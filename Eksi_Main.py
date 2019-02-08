@@ -1,6 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 import time
+from datetime import datetime
+import locale
+
+locale.setlocale(locale.LC_ALL,"")
 
 import News_Database
 import User_Database
@@ -168,6 +172,12 @@ while True:
 
 			new_posts = 0
 
+			right_now = datetime.now()
+			day = datetime.today().day
+			month_year = datetime.strftime(right_now, "%B %Y")
+
+			todays_date = str(day) + " " + str(month_year)
+
 			# Checking if there are any users on database
 			if (Mail.total_user() == 0):
 
@@ -207,8 +217,8 @@ while True:
 				html_content = response.content
 
 			except:
-				print("Something unexpected happened.")
-				time.sleep(300)
+				print("Something unexpected happened. Time: " + str(datetime.strftime(datetime.now(), "%X")))
+				time.sleep(180)
 
 			soup = BeautifulSoup(html_content, "html.parser")
 			item_html = soup.find_all("div", {"class": "col-flex"})
@@ -227,6 +237,7 @@ while True:
 			links = []
 			headlines = []
 			images = []
+			Pos_ID_1 = []
 
 			for i in link_html:
 				links.append(i['href'])
@@ -238,12 +249,16 @@ while True:
 			for i in images_html:
 				i = str(i['style']).replace("background-image: url('", "").replace("')", "")
 				images.append(i)
+				ID = i.replace("https://seyler.ekstat.com", "")
+				ID = ID.replace("/img/230/", "")
+				ID = ID.replace("/img/max/800/", "")
+				ID = ID.replace("/img/480/", "")
+				ID = ID[19:]
+				ID = ID[:-4]
+				Pos_ID_1.append(ID)
 
-			# for i,j,k in zip(links,headlines,images):
-			# print(i,"\n",j,"\n",k)
-			# print("------------------------------")
 
-			for link, headline, image in zip(links, headlines, images):
+			for ID, link, headline, image in zip(Pos_ID_1, links, headlines, images):
 				url = link
 				headers = {
 					'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
@@ -251,19 +266,25 @@ while True:
 				html_content = response.content
 				soup = BeautifulSoup(html_content, "html.parser")
 
+				cover_img_html = soup.find("div",{"class":"cover-img"})
+				cover_img = cover_img_html.img['data-src']
+
+				cover_img = cover_img.replace("https://seyler.ekstat.com","")
+				cover_img = cover_img.replace("/img/max/800/","")
+				cover_img = cover_img.replace("/img/230/","")
+				cover_img = cover_img.replace("/img/480/","")
+
+				cover_img = cover_img[19:]
+				cover_img = cover_img[:-4]
+
+				ID_2 = cover_img
+
 				date_html = soup.find("span", {"class": "meta-date"})
 				date = str(date_html.get_text())
-				date = date.replace("        ", "").replace("\n", "").replace("\r", "")
+				date = date.replace("        ", "").replace("\n", "").replace("\r", "").replace("      ","")
 				date_sql = date
 
-				if (date[0].isdigit() and date[1].isdigit()):
-					date = int(str(date[0] + date[1]))
-				elif (date[0].isdigit()):
-					date = int(date[0])
-
-				day = int(time.strftime("%d"))
-
-				if (date == day and not News.check_if_post_exists(link)):
+				if (todays_date == date and (not News.check_if_post_exists(id_1 = ID) and not News.check_if_post_exists(id_2 = ID_2) and not News.check_if_post_exists(link = link))):
 					read_num_html = soup.find("b")
 					read_num = read_num_html.get_text()
 
@@ -274,7 +295,7 @@ while True:
 
 					size = "big"
 
-					Post = News_Database.News(headline,genre,genre_link,date_sql,read_num,link,image,size)
+					Post = News_Database.News(ID,ID_2,headline,genre,genre_link,date_sql,read_num,link,image,size)
 					News.add_post(Post)
 
 					mail_list = Mail.get_mails()
@@ -294,8 +315,8 @@ while True:
 				html_content = response.content
 
 			except:
-				print("Something unexpected happened.")
-				time.sleep(300)
+				print("Something unexpected happened. Time: " + str(datetime.strftime(datetime.now(), "%X")))
+				time.sleep(180)
 
 			soup = BeautifulSoup(html_content, "html.parser")
 			item_html = soup.find_all("div", {"class": "col-md-8"})
@@ -319,6 +340,7 @@ while True:
 			small_genre_links = []
 			small_read_num = []
 			small_images = []
+			small_ID = []
 
 			medium_link = ""
 			medium_headline = ""
@@ -326,12 +348,25 @@ while True:
 			medium_genre_link = ""
 			medium_read_num = ""
 			medium_image = ""
+			medium_ID = ""
 
 			for i,j in zip(small_items_html,range(4)):
 				small_links.append(i.a['href'])
 				small_genre_links.append("https://seyler.eksisozluk.com" + str(i.span.a['href']))
 				small_genres.append(str(i.span.text).replace("\n", "").replace("        ", "").replace("  ",""))
 				small_images.append(i.img['data-src'])
+
+				img = str(i.img['data-src'])
+
+				ID = img.replace("https://seyler.ekstat.com", "")
+				ID = ID.replace("/img/230/","")
+				ID = ID.replace("/max/800/","")
+				ID = ID.replace("/img/480/","")
+				ID = ID[19:]
+				ID = ID[:-4]
+
+				small_ID.append(ID)
+
 
 			for i,j in zip(small_item_read_num_html,range(5)):
 				text = (str(i.text).replace("      ","").replace("\r","").replace("\n","").replace("    ",""))
@@ -349,7 +384,7 @@ while True:
 			small_headlines.__delitem__(1)
 
 
-			for link, headline, genre, genre_link, read_num, image in zip(small_links, small_headlines, small_genres, small_genre_links, small_read_num, small_images):
+			for ID, link, headline, genre, genre_link, read_num, image in zip(small_ID, small_links, small_headlines, small_genres, small_genre_links, small_read_num, small_images):
 
 				url = link
 				headers = {
@@ -358,23 +393,38 @@ while True:
 				html_content = response.content
 				soup = BeautifulSoup(html_content, "html.parser")
 
+				try:
+					cover_img_html = soup.find("div", {"class": "cover-img"})
+					cover_img = cover_img_html.img['data-src']
+				except:
+					cover_img_html = soup.find("div", {"class": "medium-insert-images ui-sortable"})
+					cover_img = cover_img_html.img['src']
+
+
+
+
+				cover_img = cover_img.replace("https://seyler.ekstat.com", "")
+				cover_img = cover_img.replace("/img/max/800/", "")
+				cover_img = cover_img.replace("/img/230/", "")
+				cover_img = cover_img.replace("/img/480/", "")
+
+				cover_img = cover_img[19:]
+				cover_img = cover_img[:-4]
+
+
+				ID_2 = cover_img
+
 				date_html = soup.find("span", {"class": "meta-date"})
 				date = str(date_html.get_text())
-				date = date.replace("        ", "").replace("\n", "").replace("\r", "")
+				date = date.replace("        ", "").replace("\n", "").replace("\r", "").replace("      ","")
 				date_sql = date
 
-				if (date[0].isdigit() and date[1].isdigit()):
-					date = int(str(date[0] + date[1]))
-				elif (date[0].isdigit()):
-					date = int(date[0])
 
-				day = int(time.strftime("%d"))
-
-				if (date == day and not News.check_if_post_exists(link)):
+				if (todays_date == date and (not News.check_if_post_exists(id_1 = ID) and not News.check_if_post_exists(id_2 = ID_2) and not News.check_if_post_exists(link = link))):
 
 					size = "small"
 
-					Post = News_Database.News(headline, genre, genre_link, date_sql, read_num, link, image, size)
+					Post = News_Database.News(ID, ID_2, headline, genre, genre_link, date_sql, read_num, link, image, size)
 					News.add_post(Post)
 
 					mail_list = Mail.get_mails()
@@ -393,30 +443,53 @@ while True:
 			medium_genre_link = "https://seyler.eksisozluk.com" + str(medium_item_html.span.a['href'])
 			medium_image = medium_item_html.img['data-src']
 
+			ID = medium_image.replace("https://seyler.ekstat.com", "")
+			ID = ID.replace("/img/max/800/","")
+			ID = ID.replace("/img/230/","")
+			ID = ID.replace("/img/480/","")
+			ID = ID[19:]
+			ID = ID[:-4]
+			medium_ID = ID
+
+
 			url = medium_link
 			headers = {
 				'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-			response = requests.get(url, headers=headers)
-			html_content = response.content
+			try:
+
+				response = requests.get(url, headers=headers)
+				html_content = response.content
+			except:
+				print("Something unexpected happened. Time: " + str(datetime.strftime(datetime.now(), "%X")))
+				time.sleep(180)
+
+
 			soup = BeautifulSoup(html_content, "html.parser")
+
+			cover_img_html = soup.find("div", {"class": "cover-img"})
+			cover_img = cover_img_html.img['data-src']
+
+			cover_img = cover_img.replace("https://seyler.ekstat.com", "")
+			cover_img = cover_img.replace("/img/max/800/", "")
+			cover_img = cover_img.replace("/img/230/", "")
+			cover_img = cover_img.replace("/img/480/", "")
+
+			cover_img = cover_img[19:]
+			cover_img = cover_img[:-4]
+
+			ID_2 = cover_img
 
 			date_html = soup.find("span", {"class": "meta-date"})
 			date = str(date_html.get_text())
-			date = date.replace("        ", "").replace("\n", "").replace("\r", "")
+			date = date.replace("        ", "").replace("\n", "").replace("\r", "").replace("      ","")
 			date_sql = date
 
-			if (date[0].isdigit() and date[1].isdigit()):
-				date = int(str(date[0] + date[1]))
-			elif (date[0].isdigit()):
-				date = int(date[0])
 
-			day = int(time.strftime("%d"))
-
-			if (date == day and not News.check_if_post_exists(medium_link)):
+			if (todays_date == date and (not News.check_if_post_exists(id_1 = ID) and not News.check_if_post_exists(id_2 = ID_2) and not News.check_if_post_exists(link = medium_link))):
 
 				size = "medium"
 
-				Post = News_Database.News(medium_headline, medium_genre, medium_genre_link, date_sql, medium_read_num, medium_link, medium_image, size)
+				Post = News_Database.News(ID, ID_2, medium_headline, medium_genre, medium_genre_link, date_sql, medium_read_num, medium_link, medium_image, size)
 				News.add_post(Post)
 
 				mail_list = Mail.get_mails()
@@ -429,7 +502,14 @@ while True:
 					Inform_User.send_mail(user[0], text_mail)
 
 
-			print("Process finished. " + str(new_posts) + " new post released. Waiting for 3 min.")
+			output = ""
+
+			if (new_posts == 0):
+				output = "No new post released. Waiting for 3 min. Time: " + str(datetime.strftime(datetime.now(), "%X"))
+			else:
+				output = "0" + str(new_posts) + " new post released. Waiting for 3 min. Time: " + str(datetime.strftime(datetime.now(), "%X"))
+
+			print(output)
 			time.sleep(180)
 
 
