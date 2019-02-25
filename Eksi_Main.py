@@ -266,8 +266,12 @@ while True:
 				html_content = response.content
 				soup = BeautifulSoup(html_content, "html.parser")
 
-				cover_img_html = soup.find("div",{"class":"cover-img"})
-				cover_img = cover_img_html.img['data-src']
+				try:
+					cover_img_html = soup.find("div", {"class": "cover-img"})
+					cover_img = cover_img_html.img['data-src']
+				except:
+					cover_img_html = soup.find("div", {"class": "medium-insert-images ui-sortable"})
+					cover_img = cover_img_html.img['src']
 
 				cover_img = cover_img.replace("https://seyler.ekstat.com","")
 				cover_img = cover_img.replace("/img/max/800/","")
@@ -440,7 +444,11 @@ while True:
 
 			medium_link = medium_item_html.a['href']
 			medium_genre = str(medium_item_html.span.text).replace("\n", "").replace("        ", "").replace("  ","")
-			medium_genre_link = "https://seyler.eksisozluk.com" + str(medium_item_html.span.a['href'])
+			try:
+				medium_genre_link = "https://seyler.eksisozluk.com" + str(medium_item_html.span.a['href'])
+			except Exception as e:
+				medium_genre_link = "#"
+			
 			medium_image = medium_item_html.img['data-src']
 
 			ID = medium_image.replace("https://seyler.ekstat.com", "")
@@ -466,8 +474,13 @@ while True:
 
 			soup = BeautifulSoup(html_content, "html.parser")
 
-			cover_img_html = soup.find("div", {"class": "cover-img"})
-			cover_img = cover_img_html.img['data-src']
+			
+			try:
+					cover_img_html = soup.find("div", {"class": "cover-img"})
+					cover_img = cover_img_html.img['data-src']
+			except:
+					cover_img_html = soup.find("div", {"class": "medium-insert-images ui-sortable"})
+					cover_img = cover_img_html.img['src']
 
 			cover_img = cover_img.replace("https://seyler.ekstat.com", "")
 			cover_img = cover_img.replace("/img/max/800/", "")
