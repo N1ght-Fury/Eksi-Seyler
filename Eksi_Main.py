@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 import locale
 
-locale.setlocale(locale.LC_ALL,"")
+locale.setlocale(locale.LC_ALL,"TR")
 
 import News_Database
 import User_Database
