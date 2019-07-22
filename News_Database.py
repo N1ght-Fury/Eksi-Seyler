@@ -268,8 +268,9 @@ class Database_Post():
             select_ID = "Link"
             var_value = link
 
-        query = "select * from Tbl_Posts where " + select_ID + " = @p1"
-        self.cursor.execute(query,(var_value,))
+        query = "select * from Tbl_Posts where " + select_ID + " = '" + var_value + "'"
+        #print(query)
+        self.cursor.execute(query)
         posts = self.cursor.fetchall()
 
         if (len(posts) == 0):
