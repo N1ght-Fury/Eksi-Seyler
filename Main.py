@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import time
 from datetime import datetime
-
+import sys
 
 import News_Database
 import User_Database
@@ -12,17 +12,17 @@ import Inform_User
 News = News_Database.Database_Post()
 Mail = User_Database.Database_User()
 
-print("""
-Enter '1' to organize user database.
-Enter '2' to start the program.
-Enter 'q' to exit program.
-""")
+#print("""
+#Enter '1' to organize user database.
+#Enter '2' to start the program.
+#Enter 'q' to exit program.
+#""")
 
 while True:
 
-	number = input("Command: ")
+	#number = input("Command: ")
 
-	if (number == "1"):
+	if (sys.argv[1] == "1"):
 
 		print("""
 		Enter '1' to see all users.
@@ -164,7 +164,7 @@ while True:
 				print("Invalid command. Try again.")
 
 
-	elif (number == "2"):
+	elif (sys.argv[1] == "2"):
 
 		while True:
 
@@ -534,8 +534,6 @@ while True:
 			time.sleep(180)
 
 
-	elif (number.lower() == "q"):
-		exit()
-
 	else:
 		print("Invalid command. Try again.")
+		exit()
