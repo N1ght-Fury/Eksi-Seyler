@@ -284,6 +284,9 @@ while True:
 
 				ID_2 = cover_img
 
+				if (ID_2 == ''):
+					ID_2 = 'No Value'
+
 				date_html = soup.find("span", {"class": "meta-date"})
 				date = str(date_html.get_text())
 				date = date.replace("        ", "").replace("\n", "").replace("\r", "").replace("      ","")
@@ -430,7 +433,11 @@ while True:
 				date = date.replace("        ", "").replace("\n", "").replace("\r", "").replace("      ","")
 				date_sql = date
 
+				if (ID_2 == ''):
+					ID_2 = 'No Value'
+
 				#print("link = " + str(link))
+				#print("ID:" + ID + " ID2: " + ID_2 + "Link: " + link + "\n")
 
 				if (todays_date == date and (not News.check_if_post_exists(id_1 = ID) and not News.check_if_post_exists(id_2 = ID_2) and not News.check_if_post_exists(link = link))):
 
@@ -499,6 +506,9 @@ while True:
 			cover_img = cover_img[:-4]
 
 			ID_2 = cover_img
+
+			if (ID_2 == ''):
+				ID_2 = 'No Value'
 
 			date_html = soup.find("span", {"class": "meta-date"})
 			date = str(date_html.get_text())
