@@ -2,9 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import time
 from datetime import datetime
-import locale
 
-locale.setlocale(locale.LC_ALL,"TR")
 
 import News_Database
 import User_Database
@@ -174,9 +172,12 @@ while True:
 
 			right_now = datetime.now()
 			day = datetime.today().day
-			month_year = datetime.strftime(right_now, "%B %Y")
+			month = datetime.today().month
+			year = datetime.today().year
 
-			todays_date = str(day) + " " + str(month_year)
+			month_in_turkish = {'1':'Ocak', '2':'Şubat', '3':'Mart', '4':'Nisan', '5':'Mayıs', '6':'Haziran', '7':'Temmuz', '8':'Ağustos', '9':'Eylül', '10':'Ekim', '11':'Kasım', '12':'Aralık'}
+
+			todays_date = str(day) + " " + str(month_in_turkish[str(month)]) + " " + str(year)
 
 			# Checking if there are any users on database
 			if (Mail.total_user() == 0):
@@ -387,7 +388,6 @@ while True:
 
 			small_headlines.__delitem__(1)
 
-
 			for ID, link, headline, genre, genre_link, read_num, image in zip(small_ID, small_links, small_headlines, small_genres, small_genre_links, small_read_num, small_images):
 
 				url = link
@@ -397,12 +397,19 @@ while True:
 				html_content = response.content
 				soup = BeautifulSoup(html_content, "html.parser")
 
+				cover_img = ""
+
 				try:
 					cover_img_html = soup.find("div", {"class": "cover-img"})
 					cover_img = cover_img_html.img['data-src']
 				except:
-					cover_img_html = soup.find("div", {"class": "medium-insert-images ui-sortable"})
-					cover_img = cover_img_html.img['src']
+					try:
+						cover_img_html = soup.find("div", {"class": "medium-insert-images ui-sortable"})
+						cover_img = cover_img_html.img['src']
+					except:
+						pass
+
+					
 
 
 
@@ -423,6 +430,7 @@ while True:
 				date = date.replace("        ", "").replace("\n", "").replace("\r", "").replace("      ","")
 				date_sql = date
 
+				#print("link = " + str(link))
 
 				if (todays_date == date and (not News.check_if_post_exists(id_1 = ID) and not News.check_if_post_exists(id_2 = ID_2) and not News.check_if_post_exists(link = link))):
 
