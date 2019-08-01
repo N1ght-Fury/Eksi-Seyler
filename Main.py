@@ -220,6 +220,7 @@ while True:
 			except:
 				print("Something unexpected happened. Time: " + str(datetime.strftime(datetime.now(), "%X")))
 				time.sleep(180)
+				continue
 
 			soup = BeautifulSoup(html_content, "html.parser")
 			item_html = soup.find_all("div", {"class": "col-flex"})
@@ -325,6 +326,7 @@ while True:
 			except:
 				print("Something unexpected happened. Time: " + str(datetime.strftime(datetime.now(), "%X")))
 				time.sleep(180)
+				continue
 
 			soup = BeautifulSoup(html_content, "html.parser")
 			item_html = soup.find_all("div", {"class": "col-md-8"})
@@ -412,10 +414,6 @@ while True:
 					except:
 						pass
 
-					
-
-
-
 
 				cover_img = cover_img.replace("https://seyler.ekstat.com", "")
 				cover_img = cover_img.replace("/img/max/800/", "")
@@ -479,23 +477,23 @@ while True:
 			headers = {
 				'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 			try:
-
 				response = requests.get(url, headers=headers)
 				html_content = response.content
 			except:
 				print("Something unexpected happened. Time: " + str(datetime.strftime(datetime.now(), "%X")))
 				time.sleep(180)
+				continue
 
 
 			soup = BeautifulSoup(html_content, "html.parser")
 
 			
 			try:
-					cover_img_html = soup.find("div", {"class": "cover-img"})
-					cover_img = cover_img_html.img['data-src']
+				cover_img_html = soup.find("div", {"class": "cover-img"})
+				cover_img = cover_img_html.img['data-src']
 			except:
-					cover_img_html = soup.find("div", {"class": "medium-insert-images ui-sortable"})
-					cover_img = cover_img_html.img['src']
+				cover_img_html = soup.find("div", {"class": "medium-insert-images ui-sortable"})
+				cover_img = cover_img_html.img['src']
 
 			cover_img = cover_img.replace("https://seyler.ekstat.com", "")
 			cover_img = cover_img.replace("/img/max/800/", "")
