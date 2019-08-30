@@ -261,11 +261,17 @@ while True:
 
 
 			for ID, link, headline, image in zip(Pos_ID_1, links, headlines, images):
-				url = link
-				headers = {
-					'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-				response = requests.get(url, headers=headers)
-				html_content = response.content
+				try:
+					url = link
+					headers = {
+						'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+					response = requests.get(url, headers=headers)
+					html_content = response.content
+				except Exception as e:
+					print("Something unexpected happened. Time: " + str(datetime.strftime(datetime.now(), "%X")))
+					time.sleep(180)
+					continue
+				
 				soup = BeautifulSoup(html_content, "html.parser")
 
 				try:
