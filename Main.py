@@ -278,8 +278,12 @@ while True:
 					cover_img_html = soup.find("div", {"class": "cover-img"})
 					cover_img = cover_img_html.img['data-src']
 				except:
-					cover_img_html = soup.find("div", {"class": "medium-insert-images ui-sortable"})
-					cover_img = cover_img_html.img['src']
+					try:
+						cover_img_html = soup.find("div", {"class": "medium-insert-images ui-sortable"})
+						cover_img = cover_img_html.img['src']
+					except Exception as e:
+						break
+					
 
 				cover_img = cover_img.replace("https://seyler.ekstat.com","")
 				cover_img = cover_img.replace("/img/max/800/","")
